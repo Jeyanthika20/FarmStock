@@ -1,8 +1,8 @@
 jupyter 
-pandas 
-numpy 
-scikit-learn 
-matplotlib 
-seaborn 
-flask 
-flask-cors
+fastapi
+uvicorn
+pandas
+scikit-learn
+numpy
+matplotlib
+seaborn
