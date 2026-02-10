@@ -4,3 +4,12 @@ pandas
 numpy
 scikit-learn
 python-multipart
+sqlalchemy
+psycopg2-binary
+python-jose
+passlib[bcrypt]
+python-dotenv
+joblib
+alembic
+
+
