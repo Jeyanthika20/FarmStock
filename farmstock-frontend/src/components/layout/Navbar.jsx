@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from 'react-i18next'; // Add this
 import { 
   Sprout, 
   Bell, 
@@ -10,9 +11,11 @@ import {
   Menu
 } from 'lucide-react';
 import { getInitials } from '../../utils/helpers';
+import LanguageSwitcher from '../common/LanguageSwitcher'; // Add this
 
 const Navbar = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation(); // Add this
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -40,13 +43,16 @@ const Navbar = ({ onMenuClick }) => {
               <Sprout className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900 hidden sm:block">
-              FarmStock
+              {t('common.farmstock')}
             </span>
           </Link>
         </div>
 
         {/* Right Section */}
         <div className="flex items-center space-x-3">
+          {/* Language Switcher - ADD THIS */}
+          <LanguageSwitcher />
+
           {/* Notifications */}
           <button className="relative p-2 rounded-lg hover:bg-gray-100 transition">
             <Bell className="w-6 h-6 text-gray-600" />
@@ -85,12 +91,12 @@ const Navbar = ({ onMenuClick }) => {
                   
                   <button className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition w-full text-left">
                     <User className="w-4 h-4 text-gray-600" />
-                    <span className="text-sm text-gray-700">Profile</span>
+                    <span className="text-sm text-gray-700">{t('common.profile')}</span>
                   </button>
                   
                   <button className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition w-full text-left">
                     <Settings className="w-4 h-4 text-gray-600" />
-                    <span className="text-sm text-gray-700">Settings</span>
+                    <span className="text-sm text-gray-700">{t('common.settings')}</span>
                   </button>
                   
                   <hr className="my-2" />
@@ -100,7 +106,7 @@ const Navbar = ({ onMenuClick }) => {
                     className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition w-full text-left"
                   >
                     <LogOut className="w-4 h-4 text-red-600" />
-                    <span className="text-sm text-red-600">Logout</span>
+                    <span className="text-sm text-red-600">{t('common.logout')}</span>
                   </button>
                 </div>
               </>

@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from 'react-i18next'; // Add this
 import {
   LayoutDashboard,
   Package,
@@ -15,31 +16,32 @@ import {
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { user } = useAuth();
+  const { t } = useTranslation(); // Add this
   const location = useLocation();
 
   const farmerMenuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/farmer/dashboard' },
-    { icon: Package, label: 'My Products', path: '/farmer/products' },
-    { icon: Plus, label: 'Add Product', path: '/farmer/add-product' },
-    { icon: ShoppingCart, label: 'Orders', path: '/farmer/orders' },
-    { icon: BarChart3, label: 'Analytics', path: '/farmer/analytics' },
-    { icon: MessageSquare, label: 'Messages', path: '/farmer/messages' },
+    { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/farmer/dashboard' },
+    { icon: Package, label: t('menu.myProducts'), path: '/farmer/products' },
+    { icon: Plus, label: t('menu.addProduct'), path: '/farmer/add-product' },
+    { icon: ShoppingCart, label: t('menu.orders'), path: '/farmer/orders' },
+    { icon: BarChart3, label: t('menu.analytics'), path: '/farmer/analytics' },
+    { icon: MessageSquare, label: t('menu.messages'), path: '/farmer/messages' },
   ];
 
   const buyerMenuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/buyer/dashboard' },
-    { icon: Store, label: 'Marketplace', path: '/buyer/marketplace' },
-    { icon: ShoppingCart, label: 'My Orders', path: '/buyer/orders' },
-    { icon: Package, label: 'Wishlist', path: '/buyer/wishlist' },
-    { icon: MessageSquare, label: 'Messages', path: '/buyer/messages' },
+    { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/buyer/dashboard' },
+    { icon: Store, label: t('menu.marketplace'), path: '/buyer/marketplace' },
+    { icon: ShoppingCart, label: t('menu.myOrders'), path: '/buyer/orders' },
+    { icon: Package, label: t('menu.wishlist'), path: '/buyer/wishlist' },
+    { icon: MessageSquare, label: t('menu.messages'), path: '/buyer/messages' },
   ];
 
   const supplierMenuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/supplier/dashboard' },
-    { icon: Package, label: 'My Supplies', path: '/supplier/supplies' },
-    { icon: Plus, label: 'Add Supply', path: '/supplier/add-supply' },
-    { icon: ShoppingCart, label: 'Orders', path: '/supplier/orders' },
-    { icon: BarChart3, label: 'Analytics', path: '/supplier/analytics' },
+    { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/supplier/dashboard' },
+    { icon: Package, label: t('menu.mySupplies'), path: '/supplier/supplies' },
+    { icon: Plus, label: t('menu.addSupply'), path: '/supplier/add-supply' },
+    { icon: ShoppingCart, label: t('menu.orders'), path: '/supplier/orders' },
+    { icon: BarChart3, label: t('menu.analytics'), path: '/supplier/analytics' },
   ];
 
   const menuItems = 
@@ -104,13 +106,13 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className="p-4 border-t border-gray-200">
             <div className="bg-primary-50 rounded-lg p-4">
               <p className="text-sm font-semibold text-primary-900 mb-1">
-                Need Help?
+                {t('common.needHelp')}
               </p>
               <p className="text-xs text-primary-700 mb-3">
-                Contact our support team
+                {t('common.contactSupport')}
               </p>
               <button className="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-lg hover:bg-primary-700 transition w-full">
-                Get Support
+                {t('common.getSupport')}
               </button>
             </div>
           </div>

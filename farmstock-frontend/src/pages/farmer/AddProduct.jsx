@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const AddProduct = () => {
     description: '',
   });
   const [loading, setLoading] = useState(false);
-
+  const { t } = useTranslation();
   const categories = [
     'Vegetables',
     'Fruits',
@@ -35,7 +36,7 @@ const AddProduct = () => {
 
     // Simulate API call
     setTimeout(() => {
-      toast.success('Product added successfully!');
+      toast.success(t('messages.productAddedSuccess'));
       navigate('/farmer/products');
       setLoading(false);
     }, 1000);
@@ -83,7 +84,7 @@ const AddProduct = () => {
             {/* Product Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Product Name *
+                {t('products.productName')} *
               </label>
               <input
                 type="text"
@@ -99,7 +100,7 @@ const AddProduct = () => {
             {/* Category */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Category *
+                {t('products.category')} *
               </label>
               <select
                 name="category"
@@ -119,7 +120,7 @@ const AddProduct = () => {
               {/* Price */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Price (₹) *
+                  {t('products.price')} *
                 </label>
                 <input
                   type="number"
@@ -137,7 +138,7 @@ const AddProduct = () => {
               {/* Stock */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Stock Quantity *
+                  {t('products.stock')} *
                 </label>
                 <input
                   type="number"
@@ -154,7 +155,7 @@ const AddProduct = () => {
               {/* Unit */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Unit *
+                  {t('products.unit')} *
                 </label>
                 <select
                   name="unit"
@@ -173,7 +174,7 @@ const AddProduct = () => {
             {/* Description */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Description
+                {t('products.description')}
               </label>
               <textarea
                 name="description"
@@ -192,13 +193,13 @@ const AddProduct = () => {
                 disabled={loading}
                 className="flex-1 bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Adding Product...' : 'Add Product'}
+                {loading ? t('products.addingProduct') : t('products.addProduct')}
               </button>
               <Link
                 to="/farmer/products"
                 className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition text-center"
               >
-                Cancel
+                <span>{t('common.cancel')}</span>
               </Link>
             </div>
           </form>

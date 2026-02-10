@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { Sprout, User, Mail, Lock, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
+import LanguageSwitcher from '../../components/common/LanguageSwitcher';
 
 const RegisterPage = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,28 +26,58 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validation
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(t('messages.passwordsDontMatch'));
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error(t('messages.passwordTooShort'));
       return;
     }
 
-   setLoading(true);
-const { confirmPassword: _confirmPassword, ...submitData } = formData;
-const result = await register(submitData);
-    
-    if (result.success) {
-      toast.success('Registration successful! Please login.');
-      navigate('/login');
-    } else {
-      toast.error(result.error);
+    // Validate phone number (10 digits)
+    if (!/^\d{10}$/.test(formData.phone)) {
+      toast.error(t('messages.invalidPhone'));
+      return;
     }
+
+    setLoading(true);
     
-    setLoading(false);
+    try {
+      const submitData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        role: formData.role,
+        address: formData.address,
+      };
+      
+      const result = await register(submitData);
+      
+      if (result.success) {
+        toast.success(t('messages.registrationSuccess'));
+        navigate('/login');
+      } else {
+        // Handle specific error messages
+        if (result.error.includes('already registered') || result.error.includes('already exists')) {
+          toast.error(t('messages.emailAlreadyExists'));
+        } else if (result.error.includes('network') || result.error.includes('Network')) {
+          toast.error(t('messages.networkError'));
+        } else if (result.error.includes('server') || result.error.includes('Server')) {
+          toast.error(t('messages.serverError'));
+        } else {
+          toast.error(t('messages.registrationFailed'));
+        }
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast.error(t('messages.registrationFailed'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -52,21 +85,26 @@ const result = await register(submitData);
   };
 
   const roleOptions = [
-    { value: 'farmer', label: 'Farmer', emoji: '🌾', description: 'Sell your produce' },
-    { value: 'buyer', label: 'Buyer', emoji: '🛒', description: 'Purchase products' },
-    { value: 'supplier', label: 'Supplier', emoji: '🚚', description: 'Supply materials' },
+    { value: 'farmer', label: t('auth.farmer'), emoji: '🌾', description: t('auth.farmerDesc') },
+    { value: 'buyer', label: t('auth.buyer'), emoji: '🛒', description: t('auth.buyerDesc') },
+    { value: 'supplier', label: t('auth.supplier'), emoji: '🚚', description: t('auth.supplierDesc') },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 flex items-center justify-center p-4 py-12">
       <div className="max-w-3xl w-full">
+        {/* Language Switcher - Top Right */}
+        <div className="flex justify-end mb-4">
+          <LanguageSwitcher />
+        </div>
+
         {/* Logo & Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-primary-600 rounded-2xl mb-4 shadow-lg">
             <Sprout className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Join FarmStock</h1>
-          <p className="text-gray-600">Create your account and start trading</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('auth.joinUs')}</h1>
+          <p className="text-gray-600">{t('auth.createAccountDesc')}</p>
         </div>
 
         {/* Register Card */}
@@ -75,7 +113,7 @@ const result = await register(submitData);
             {/* Role Selection */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Select Your Role
+                {t('auth.selectRole')}
               </label>
               <div className="grid grid-cols-3 gap-4">
                 {roleOptions.map((role) => (
@@ -105,7 +143,7 @@ const result = await register(submitData);
               {/* Full Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Full Name *
+                  {t('auth.fullName')} *
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -116,7 +154,7 @@ const result = await register(submitData);
                     onChange={handleChange}
                     required
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                    placeholder="John Doe"
+                    placeholder={t('auth.placeholders.name')}
                   />
                 </div>
               </div>
@@ -124,7 +162,7 @@ const result = await register(submitData);
               {/* Email */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email Address *
+                  {t('auth.email')} *
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -135,7 +173,7 @@ const result = await register(submitData);
                     onChange={handleChange}
                     required
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                    placeholder="john@example.com"
+                    placeholder={t('auth.placeholders.email')}
                   />
                 </div>
               </div>
@@ -143,7 +181,7 @@ const result = await register(submitData);
               {/* Phone */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Phone Number *
+                  {t('auth.phone')} *
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -154,8 +192,9 @@ const result = await register(submitData);
                     onChange={handleChange}
                     required
                     pattern="[0-9]{10}"
+                    maxLength="10"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                    placeholder="9876543210"
+                    placeholder={t('auth.placeholders.phone')}
                   />
                 </div>
               </div>
@@ -163,7 +202,7 @@ const result = await register(submitData);
               {/* Address */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Address *
+                  {t('auth.address')} *
                 </label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -174,7 +213,7 @@ const result = await register(submitData);
                     onChange={handleChange}
                     required
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                    placeholder="City, State"
+                    placeholder={t('auth.placeholders.address')}
                   />
                 </div>
               </div>
@@ -182,7 +221,7 @@ const result = await register(submitData);
               {/* Password */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Password *
+                  {t('auth.password')} *
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -194,7 +233,7 @@ const result = await register(submitData);
                     required
                     minLength={6}
                     className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                    placeholder="Min. 6 characters"
+                    placeholder={t('auth.placeholders.password')}
                   />
                   <button
                     type="button"
@@ -209,7 +248,7 @@ const result = await register(submitData);
               {/* Confirm Password */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Confirm Password *
+                  {t('auth.confirmPassword')} *
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -220,7 +259,7 @@ const result = await register(submitData);
                     onChange={handleChange}
                     required
                     className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                    placeholder="Re-enter password"
+                    placeholder={t('auth.placeholders.confirmPassword')}
                   />
                   <button
                     type="button"
@@ -241,13 +280,13 @@ const result = await register(submitData);
                 className="w-4 h-4 mt-1 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
               />
               <label className="ml-2 text-sm text-gray-600">
-                I agree to the{' '}
+                {t('auth.termsAgree')}{' '}
                 <a href="#" className="text-primary-600 hover:text-primary-700 font-medium">
-                  Terms and Conditions
+                  {t('auth.termsConditions')}
                 </a>{' '}
-                and{' '}
+                {t('auth.and')}{' '}
                 <a href="#" className="text-primary-600 hover:text-primary-700 font-medium">
-                  Privacy Policy
+                  {t('auth.privacyPolicy')}
                 </a>
               </label>
             </div>
@@ -258,16 +297,16 @@ const result = await register(submitData);
               disabled={loading}
               className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {loading ? t('auth.creatingAccount') : t('auth.registerButton')}
             </button>
           </form>
 
           {/* Login Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{' '}
+              {t('auth.alreadyHaveAccount')}{' '}
               <Link to="/login" className="text-primary-600 font-semibold hover:text-primary-700">
-                Login here
+                {t('auth.loginHere')}
               </Link>
             </p>
           </div>
@@ -275,7 +314,7 @@ const result = await register(submitData);
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-500 mt-8">
-          © 2025 FarmStock. All rights reserved.
+          {t('landing.copyright')}
         </p>
       </div>
     </div>

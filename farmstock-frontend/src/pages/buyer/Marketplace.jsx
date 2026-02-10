@@ -4,13 +4,14 @@ import ProductFilters from '../../components/products/ProductFilters';
 import ProductCard from '../../components/products/ProductCard';
 import ProductDetails from '../../components/products/ProductDetails';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 const Marketplace = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [priceSort, setPriceSort] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
-
+  const { t } = useTranslation();
   const categories = ['All', 'Vegetables', 'Fruits', 'Grains', 'Pulses', 'Spices', 'Dairy'];
 
   // Sample products data
@@ -169,15 +170,13 @@ const Marketplace = () => {
 
   const filteredProducts = getFilteredProducts();
 
-  // Handle add to cart
-  const handleAddToCart = (product) => {
-    toast.success(`${product.name} added to cart!`);
-    // Close modal if open
-    if (selectedProduct) {
-      setSelectedProduct(null);
-    }
-  };
-
+ {/* Update toast message */}
+const handleAddToCart = (product) => {
+  toast.success(`${product.name} ${t('marketplace.addedToCart')}`);
+  if (selectedProduct) {
+    setSelectedProduct(null);
+  }
+};
   // Handle view product details
   const handleViewProduct = (product) => {
     setSelectedProduct(product);
@@ -187,11 +186,10 @@ const Marketplace = () => {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Marketplace</h1>
-          <p className="text-gray-600 mt-1">Browse fresh produce from local farmers</p>
-        </div>
-
+         <div>
+           <h1 className="text-2xl font-bold text-gray-900">{t('marketplace.title')}</h1>
+           <p className="text-gray-600 mt-1">{t('marketplace.subtitle')}</p>
+          </div>
         {/* Filters */}
         <ProductFilters
           searchTerm={searchTerm}
@@ -206,13 +204,12 @@ const Marketplace = () => {
 
         {/* Products Count */}
         {filteredProducts.length > 0 && (
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{filteredProducts.length}</span> products
-            </p>
-          </div>
-        )}
-
+         <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-600">
+        {t('marketplace.showing')} <span className="font-semibold text-gray-900">{filteredProducts.length}</span> {t('marketplace.productsText')}
+        </p>
+        </div>
+         )}
         {/* Products Grid */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -246,7 +243,23 @@ const Marketplace = () => {
           </div>
         )}
       </div>
-
+      {/* No products */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div className="text-5xl mb-4">🔍</div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('marketplace.noProductsFound')}</h3>
+         <p className="text-gray-600 mb-4">{t('marketplace.tryAdjustingFilters')}</p>
+        <button
+          onClick={() => {
+           setSearchTerm('');
+           setSelectedCategory('All');
+           setPriceSort('');
+          }}
+         className="text-primary-600 hover:text-primary-700 font-medium"
+         >
+       {t('marketplace.clearAllFilters')}
+       </button>
+      </div>
+       
       {/* Product Details Modal */}
       {selectedProduct && (
         <ProductDetails

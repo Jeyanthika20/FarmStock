@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from 'react-i18next'; // Add this
 import {
   ShoppingCart,
   Clock,
@@ -13,6 +14,7 @@ import { formatCurrency } from '../../utils/helpers';
 
 const BuyerDashboard = () => {
   const { user } = useAuth();
+  const { t } = useTranslation(); // Add this
   const [stats] = useState({
     activeOrders: 5,
     completedOrders: 28,
@@ -27,16 +29,16 @@ const BuyerDashboard = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.name}! 🛒
+              {t('dashboard.welcomeBack')}, {user?.name}! 🛒
             </h1>
-            <p className="text-gray-600 mt-1">Find fresh produce from local farmers</p>
+            <p className="text-gray-600 mt-1">{t('dashboard.buyerGreeting')}</p>
           </div>
           <Link
             to="/buyer/marketplace"
             className="mt-4 sm:mt-0 inline-flex items-center space-x-2 bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition"
           >
             <Store className="w-5 h-5" />
-            <span>Browse Marketplace</span>
+            <span>{t('dashboard.browseMarketplace')}</span>
           </Link>
         </div>
 
@@ -44,25 +46,25 @@ const BuyerDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             icon={Clock}
-            label="Active Orders"
+            label={t('dashboard.activeOrders')}
             value={stats.activeOrders}
             color="blue"
           />
           <StatCard
             icon={CheckCircle}
-            label="Completed Orders"
+            label={t('dashboard.completedOrders')}
             value={stats.completedOrders}
             color="green"
           />
           <StatCard
             icon={ShoppingCart}
-            label="Total Spent"
+            label={t('dashboard.totalSpent')}
             value={formatCurrency(stats.totalSpent)}
             color="purple"
           />
           <StatCard
             icon={Heart}
-            label="Saved Items"
+            label={t('dashboard.savedItems')}
             value={stats.savedItems}
             color="red"
           />
@@ -71,17 +73,17 @@ const BuyerDashboard = () => {
         {/* Welcome Message */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Start exploring the marketplace!
+            {t('dashboard.startExploring')}
           </h2>
           <p className="text-gray-600 mb-6">
-            Discover fresh produce from local farmers
+            {t('dashboard.discoverProduce')}
           </p>
           <Link
             to="/buyer/marketplace"
             className="inline-flex items-center space-x-2 bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition"
           >
             <Store className="w-5 h-5" />
-            <span>View Products</span>
+            <span>{t('dashboard.viewProducts')}</span>
           </Link>
         </div>
       </div>
@@ -96,9 +98,7 @@ const StatCard = ({ icon, label, value, color }) => {
     purple: 'bg-purple-100 text-purple-600',
     red: 'bg-red-100 text-red-600',
   };
-
-  const Icon = icon;
-
+ const Icon=icon;
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between">
@@ -106,20 +106,12 @@ const StatCard = ({ icon, label, value, color }) => {
           <p className="text-sm text-gray-600 mb-1">{label}</p>
           <p className="text-2xl font-bold text-gray-900">{value}</p>
         </div>
-
-        {Icon ? (
-          <div
-            className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-              colorClasses[color] || ''
-            }`}
-          >
-            <Icon className="w-6 h-6" />
-          </div>
-        ) : null}
+        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${colorClasses[color]}`}>
+          <Icon className="w-6 h-6" />
+        </div>
       </div>
     </div>
   );
 };
-
 
 export default BuyerDashboard;
